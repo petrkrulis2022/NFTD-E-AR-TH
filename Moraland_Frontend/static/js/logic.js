@@ -1,5 +1,7 @@
 
-
+//Initializing constants
+const serverUrl = "https://ljgiacaiuzaf.usemoralis.com:2053/server";
+const appId = "6CU1DIgbkjrck51m2HCB8WB5ymwcgAxEk795qXWS";
 
 //Graphics constants
 // - map management constants
@@ -31,7 +33,13 @@ const unassignables =  [
                         "0x3c02bccec034096f69ebbaacc075adbf352d2309a6de6b632d7b18b10b60180c",
                         "0xfaf95d6bec5226ee145a021be8bda12c1062f7817ba6340499023b26d7e7a3f0",
                         "0x98ce6651c1676f0d20fc0553d96755f2162f97c874ec668be5ebc68c3b2b7b41"
-]
+                        ]
+
+//web3 constants
+const contractAddress = "0x65Faf7661789254858121630f99a489A54c7DbB1"; 
+const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"tokenURI","type":"string"},{"internalType":"bytes","name":"bytesId","type":"bytes"}],"name":"assign","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":true,"internalType":"address","name":"assignee","type":"address"},{"indexed":false,"internalType":"bytes","name":"bytesId","type":"bytes"}],"name":"Assigned","type":"event"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"bytesId","type":"bytes"}],"name":"exist","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"}];
+
+const ethers = Moralis.web3Library;
 
 
 //canvas drawing functions
@@ -42,34 +50,25 @@ function drawCanvas(){
     plotCanvas.height = plots
     worldImage.src = 'static/img/Moraland.png';
     worldImage.onload = () => {
-
         initializeMap()
-
     }
 }
 
 function initializeMap() {
     updatePlotLocation()
-    //setPlotData();
+    setPlotData();
     drawMapSection(mainCtx,mapView.mapOffsetX,mapView.mapOffsetY);
     drawCursor(plotViewOffsets,plotViewOffsets);
     drawMapSection(plotCtx,-1 * plotView.locationX,-1 *plotView.locationY);
 }
 
-function drawMapSection(ctx,originX,originY){
-    ctx.drawImage(worldImage,originX,originY);
-}
-
-function drawCursor(x,y) {
-    mainCtx.strokeRect(plots + (2 * roads),plots + (2 * roads),plots,plots)
-}
-
+//animate functions
 function move(direction) {
     const validMove = validateMove(direction);
     if (validMove) {
         updateView(direction);
-        updatePlotLocation();
         drawMapSection(mainCtx,mapView.mapOffsetX,mapView.mapOffsetY);
+        updatePlotLocation();
         drawCursor(plotViewOffsets,plotViewOffsets);
         drawMapSection(plotCtx,-1 * plotView.locationX,-1 *plotView.locationY);
         setPlotData();
@@ -85,8 +84,136 @@ function validateMove(direction) {
     }
 }
 
+function updateView(direction) {
+    switch(direction){
+        case 'ArrowRight': 
+            plotView.plotX += 1;
+            mapView.mapOffsetX -= plots + roads;
+            break
+        case 'ArrowDown': 
+            plotView.plotY += 1;
+            mapView.mapOffsetY -= plots + roads;
+            break
+        case 'ArrowLeft': 
+            plotView.plotX -= 1;
+            mapView.mapOffsetX += plots + roads;
+            break
+        case 'ArrowUp': 
+            plotView.plotY -= 1;
+            mapView.mapOffsetY += plots + roads;
+            break
+    }
+}
+
+function drawMapSection(ctx,originX,originY){
+    ctx.drawImage(worldImage,originX,originY);
+}
+
+function drawCursor(x,y) {
+    mainCtx.strokeRect(x,y,plots,plots)
+}
+
 function updatePlotLocation() {
     plotView.locationX = -1 * mapView.mapOffsetX + plotViewOffsets;
     plotView.locationY = -1 * mapView.mapOffsetY + plotViewOffsets;
 }
+
+//UI Functions
+function setPlotData() {
+    const plotID = ethers.utils.id(JSON.stringify(plotView));
+    document.getElementById("plotX").value = plotView.plotX
+    document.getElementById("plotY").value = plotView.plotY
+    document.getElementById("locationX").value = plotView.locationX
+    document.getElementById("locationY").value = plotView.locationY
+    document.getElementById("plotID").value = plotID;
+    isPlotAssignable(plotID);
+}
+ 
+function isPlotAssignable(plotID) {
+    const _unassignable = unassignables.includes(plotID);
+    if (_unassignable) {
+        document.getElementById("claimButton").setAttribute("disabled",null);
+    } 
+    else {
+        document.getElementById("claimButton").removeAttribute("disabled");
+    }
+} 
+
+function displayMessage(messageType, message){
+    const messages = {
+                "00":`<div class= "alert alert-success"> ${message} </div>`,
+                "01":`<div class= "alert alert-danger"> ${message} </div>`
+            }
+    document.getElementById("notifications").innerHTML = messages[messageType];
+}
+
+//web3 Functions
+async function login(){
+    Moralis.Web3.authenticate().then(async function (){
+        const chainIdHex = await Moralis.switchNetwork("0x13881");
+    });
+}
+
+async function assignPlot() {
+    const plotID = document.getElementById("plotID").value;
+    const assigned = await isPlotAssigned(plotID);
+    if (!assigned) {
+        const metadata = {
+            "PlotID":plotID,
+            "PlotX":document.getElementById("plotX").value,
+            "PlotY":document.getElementById("plotY").value,
+            "LocationX":document.getElementById("locationX").value,
+            "LocationY":document.getElementById("locationX").value,
+            "image":"https://moralis.io/wp-content/uploads/2021/06/Moralis-Glass-Favicon.svg",
+        }
+        const metadataFile = new Moralis.File("metadata.json", {base64 : btoa(JSON.stringify(metadata))});
+        await metadataFile.saveIPFS();
+        const metadataURI = metadataFile.ipfs();
+        await mint(metadataURI);
+    }
+    else{
+        displayMessage("01","Plot is already assigned");
+    }
+}
+
+async function mint(_tokenURI) {
+    const contractOptions = {
+        contractAddress: contractAddress,
+        abi: contractABI,
+        functionName: "assign",
+        params: {
+            tokenURI:_tokenURI,
+            bytesId:document.getElementById("plotID").value
+        }
+    }
+    try{
+        const transaction = await Moralis.executeFunction(contractOptions);
+        await transaction.wait();
+        displayMessage("00","Transaction confirmed with hash "+transaction.hash);
+    }
+    catch(error){
+        displayMessage("01","Transaction reverted see console for details");
+        console.log(error)
+    }
+}
+
+
+async function isPlotAssigned(plotID) {
+    const contractOptions = {
+        contractAddress: contractAddress,
+        abi: contractABI,
+        functionName: "exist",
+        params: {
+            bytesId:plotID
+        }
+    }
+    return await Moralis.executeFunction(contractOptions);
+}
+
+
+Moralis.start({ serverUrl, appId }); 
+login(); 
 drawCanvas();
+window.addEventListener('keydown' , (e) => {
+    move(e.key)
+});
