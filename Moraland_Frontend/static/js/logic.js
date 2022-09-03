@@ -58,9 +58,9 @@ async function upload () {
 const data = $uploadValue.files[0];
 const file = new Moralis.File(data.name, data);
 await file.saveIPFS();
- cIdOfUploadeedPhoto = file.ipfs();
- nftObject.imageURI=cIdOfUploadeedPhoto;
- $ipfs.removeAttribute('disabled');
+ cIdOfUploadeedPhoto = file.ipfs();                     // the URI of the image
+ nftObject.imageURI=cIdOfUploadeedPhoto;                //i append the generated imageURI to the metadata object
+ $ipfs.removeAttribute('disabled');                     // not important
 console.log("Image saved to IPFS at: " + cIdOfUploadeedPhoto);
 }
 
