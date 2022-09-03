@@ -13,15 +13,18 @@ let hashStore=[]    // an array that would store the hashed string of the  conca
 let HashedArrAsString;   /// a string that represents all the hashes form every single tile,concatenated
 let plotID;               // will hold the master hash as a value;
 let incrementer =0;
-let nftObject;
+let nftObject;            //the metadata object
+let cIdOfUploadeedPhoto; // variable that stores the cid of the uploaded image by the user
 
 
 //=======================================================================================================================================
-HTML Selectors
+//HTML Selectors
 //=======================================================================================================================================-
 let $render=document.getElementById("render");   // not improtant 
 let $plotID=document.getElementById("plotID");   // not important
 let $ipfs=document.getElementById("ipfs");   // not important
+let $uploadImageToIPFS=document.getElementById('uploadImageToIPFS'); //not important
+let $uploadValue=document.getElementById('upload'); //not important
 
  
 //UI Functions
@@ -36,7 +39,7 @@ function setPlotData() {
      plotID = ethers.utils.id(HashedArrAsString);          // i pass this string to the hashing function again
     console.log(plotID);
     nftObject = Object.assign({},hashStore);             //initialising an object that would contain the hashes of all claimed tiles , as well as their masterhash
-    nftObject.masterHash=plotID;                          //masterhash
+    nftObject.masterHash=plotID;                          //add the masterhash to the metadata 
     console.log(nftObject);
     $plotID.value=plotID;
    
@@ -50,6 +53,22 @@ function setPlotData() {
 //IPFS functionality
 //========================================================================================================================================
 
+//1 Uploading the image to IPFS
+async function upload () {
+const data = $uploadValue.files[0];
+const file = new Moralis.File(data.name, data);
+await file.saveIPFS();
+ cIdOfUploadeedPhoto = file.ipfs();
+ nftObject.imageURI=cIdOfUploadeedPhoto;
+ $ipfs.removeAttribute('disabled');
+console.log("Image saved to IPFS at: " + cIdOfUploadeedPhoto);
+}
+
+$uploadImageToIPFS.addEventListener('click',upload);
+
+
+//upload the Image and the other metadata to IPFS
+
 
 async function uploadToIpfs () {
     const metadata = new Moralis.File("metadata.json", {
@@ -57,10 +76,13 @@ async function uploadToIpfs () {
       });
       await metadata.saveIPFS();
       console.log(metadata.hash());
-      console.log(metadata.ipfs());                     //check the console for the ipfs link
+      console.log(`Link to the file on IPFS:   ${metadata.ipfs()}`);                     //check the console for the ipfs link
 }
 
 $ipfs.addEventListener('click',uploadToIpfs);
+
+
+
 
 
 
