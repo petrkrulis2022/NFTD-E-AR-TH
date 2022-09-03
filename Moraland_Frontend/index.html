@@ -13,21 +13,8 @@
     <body>
         <main>
             <div class="container mt-5">
-                <div class="row">
-                    <h1 class="display-1 text-center text-success" > Moraland</h1>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="text-center bg-success text-white">
-                            <h1>Map</h1>
-                        </div>
-                        <div id="MainCanvasDiv" class="text-center">
-                            <canvas id="mainCanvas"></canvas>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="text-center bg-success text-white">
                             <h1>Current Plot</h1>
+                            <p id="plotView"></p>
                         </div>
                         <div id="PlotCanvasDiv"class="text-center">
                             <canvas id="plotCanvas"></canvas>
@@ -36,29 +23,16 @@
                             <span class="input-group-text">Plot ID</span>
                             <input  disabled="true" id="plotID" type="text" class="form-control">
                         </div>
-                        <div class="input-group mb-2">
+                        <div  id="render">
                             <span class="input-group-text">Plot Coordinates</span>
-                            <input disabled="true" id="plotX" type="text" class="form-control">
-                            <input disabled="true" id="plotY" type="text" class="form-control">
+                            <br/>
                         </div>
-                        <div class="input-group mb-2">
-                            <span class="input-group-text">Location Coordinates</span>
-                            <input disabled="true" id="locationX" type="text" class="form-control">
-                            <input disabled="true" id="locationY" type="text" class="form-control">
-                        </div>
-                        <div class="row">
-                            <button class="btn btn-success btn-block btn-lg" id="claimButton" onclick="assignPlot();">Claim</button>
-                        </div>
+
+                       
+                    <div>
+                        <button id="ipfs">Claim and save to IPFS</button>
                     </div>
-                </div>
-                <hr>
-                <div class="row"> 
-                    <div class="text-center bg-success text-white">
-                        <h1>Notifications</h1>
-                    </div>
-                    <div id="notifications" class="container mt-2">         
-                    </div>
-                </div>   
+ 
             </div>
         </main>
     <!-- Scripts -->
