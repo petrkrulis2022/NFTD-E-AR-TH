@@ -1,7 +1,8 @@
 
 //Initializing constants
-const serverUrl = "https://ljgiacaiuzaf.usemoralis.com:2053/server";
-const appId = "6CU1DIgbkjrck51m2HCB8WB5ymwcgAxEk795qXWS";
+const serverUrl = "https://wblsdpb8plov.usemoralis.com:2053/server";
+const appId = "B5v0xufBE67SQ92UcV0XsytjRFiTlMLCZBMgop7f";
+Moralis.start({ serverUrl, appId }); 
 const ethers = Moralis.web3Library;
 
 
@@ -25,9 +26,16 @@ let $plotID=document.getElementById("plotID");   // not important
 let $ipfs=document.getElementById("ipfs");   // not important
 let $uploadImageToIPFS=document.getElementById('uploadImageToIPFS'); //not important
 let $uploadValue=document.getElementById('upload'); //not important
+let $plotSize=document.getElementById('plotSize'); //not important
+let $userAddress=document.getElementById('userAddress'); //not important
+
+
+
+
 
  
 //UI Functions
+
 function setPlotData() {
     console.log(plotView);                      // displaying the initial words array
     for (let i=0; i<plotView.length; i++){      //loop that invokes a keccak hash on every element in the tiles' words array
@@ -42,10 +50,11 @@ function setPlotData() {
     nftObject.masterHash=plotID;                          //add the masterhash to the metadata 
     console.log(nftObject);
     $plotID.value=plotID;
+    $plotSize.innerHTML+=`<span>Your plot consists of <b>${plotView.length}</b> tiles:</span>`;
    
 
     /// code below not important 
-   plotView.map(tileWords=>$render.innerHTML+=`<span> Tile ${incrementer++} coordinates<input disabled="true" id=${incrementer} type="text" class="form-control" value=${tileWords}><p></p>`);
+   plotView.map(tileWords=>$render.innerHTML+=`<span> Tile ${incrementer++} coordinates<input disabled="true" id=${incrementer} type="text" class="form-control" value=${tileWords}>`);
 
 }
 
@@ -67,8 +76,7 @@ console.log("Image saved to IPFS at: " + cIdOfUploadeedPhoto);
 $uploadImageToIPFS.addEventListener('click',upload);
 
 
-//upload the Image and the other metadata to IPFS
-
+//2 Upload the Image and the other metadata to IPFS
 
 async function uploadToIpfs () {
     const metadata = new Moralis.File("metadata.json", {
@@ -82,10 +90,15 @@ async function uploadToIpfs () {
 $ipfs.addEventListener('click',uploadToIpfs);
 
 
-
-
-
-
+//========================================================================================================================================
+//related to communication with the 1inch API
+//========================================================================================================================================
+async function displayUser() {
+let wallet = await Moralis.User.currentAsync();
+let user = await wallet.get ('ethAddress');
+$userAddress.innerHTML=user;
+console.log(user)
+}
 
 
 
@@ -163,10 +176,12 @@ async function isPlotAssigned(plotID) {
 }
 
 */
-
-Moralis.start({ serverUrl, appId }); 
+//========================================================================================================================================
+//functions to be executed upon load
+//========================================================================================================================================
 login(); 
 setPlotData();
+displayUser();
 //drawCanvas();
 //window.addEventListener('keydown' , (e) => {
  //   move(e.key)

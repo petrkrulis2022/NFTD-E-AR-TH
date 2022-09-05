@@ -25,22 +25,42 @@
                         <div class="text-center">
                             <br/>
                             <h4>Plot Coordinates</h4>
-                        </div>
                             <br/>
-                        </div>
+                            <div id="plotSize"></div>
+                            <br/>
+                            </div>
+                            </div>
+                        
+                            <br/>
+                        
 
                        
 
-                    <div>
+                    <div class="text-center">
                     <br/>
                         <p>Upload a photo of your current location in order to claim the plot</p>
                         <input type="file" id="upload" name="filename">
                         <button id="uploadImageToIPFS">Upload Image to IPFS</button>                <!--should execute a function to upload the image to ipfs.-->
                     </div>
                     <br/>
-                    <div>
+                    <div class="text-center">
                         <button id="ipfs" disabled>Claim and save to IPFS</button>                      
                     </div>
+
+                     <br/>
+                     <hr>
+                    <div class="swapUI text-center form-group">
+                        <p> Current user address:</p>
+                        <h5 id="userAddress"></h5>
+                     <br/>
+                     <button id="swap">Deposit ETH</button>
+                    </div>
+                </div>
+            </div>
+
+
+
+                    
  
             </div>
         </main>
