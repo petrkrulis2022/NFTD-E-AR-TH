@@ -1,5 +1,5 @@
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./TestUSDT.sol";
@@ -33,6 +33,10 @@ interface Iweth {
   function withdraw(uint wad) external;
 }
 
+interface INFTLandToken {
+  function mint(address _address) external payable returns (uint256);
+}
+
 
 
 
@@ -48,6 +52,7 @@ contract DepositAndSwap {
   address constant testETH = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;        //weth contract on Goerli
   address constant testUSDT = 0xe00D656db10587363c6106D003d08fBE2F0EaC81;
   address constant minter = 0xa362c101a5d1317Ac30376eeEEFb543833d34d1A;
+  address constant NFTLandAddress  = 0x9a565Ac0E639A2D207925Be58BaBf5703370891b ;
 
   //events 
   event depositDone(address indexed from, uint indexed amount);
@@ -64,11 +69,13 @@ contract DepositAndSwap {
 // 4. Swaps USDT for weth
 // 5. unrwaps the weth for eth
 // 6. deposits the eth and gets Reth back
+// 7. Mints NFTLand plot
 //========================================================================================================================================
   function swap (uint amountIn) external  returns (uint) {
     USDT(testUSDT)._approve(uniswapRouter,amountIn);                // approves the router to spend the USDT on behalf of the msg.sender
     USDT(testUSDT)._transferfrom(msg.sender, address(this),amountIn);// transfers USDT to this contract
     Minter(minter).mint(msg.sender,amountIn);                       //mints the native NFTD token
+    INFTLandToken(NFTLandAddress).mint(msg.sender);                 // Mints the NFTLand plot
 
   //an array of addresses required for the router to implement the swap
    address[] memory path = new address[](2);

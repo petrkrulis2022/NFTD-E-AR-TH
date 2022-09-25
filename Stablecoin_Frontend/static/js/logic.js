@@ -1,7 +1,7 @@
 
 //Initializing constants
-const serverUrl = "https://wblsdpb8plov.usemoralis.com:2053/server";
-const appId = "B5v0xufBE67SQ92UcV0XsytjRFiTlMLCZBMgop7f";
+const serverUrl = "https://b3uzxumok52r.usemoralis.com:2053/server";
+const appId = "VO99o9KXVwdQipVXP4YgP0TW6zWAFgtfhDrk5riv";
 Moralis.start({ serverUrl, appId }); 
 const ethers = Moralis.web3Library;
 
@@ -49,7 +49,7 @@ function setPlotData() {
     nftObject = Object.assign({},hashStore);             //initialising an object that would contain the hashes of all claimed tiles , as well as their masterhash
     nftObject.masterHash=plotID;                          //add the masterhash to the metadata 
     console.log(nftObject);
-    $plotID.value=plotID;
+    $plotID.value=plotID;   
     $plotSize.innerHTML+=`<span>Your plot consists of <b>${plotView.length}</b> tiles:</span>`;
    
 
