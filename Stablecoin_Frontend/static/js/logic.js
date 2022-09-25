@@ -1,188 +1,141 @@
-
 //Initializing constants
-const serverUrl = "https://b3uzxumok52r.usemoralis.com:2053/server";
-const appId = "VO99o9KXVwdQipVXP4YgP0TW6zWAFgtfhDrk5riv";
-Moralis.start({ serverUrl, appId }); 
+const serverUrl = "https://bcckkboiuxaw.usemoralis.com:2053/server";
+const appId = "S5DBNsYW0Upw8HXkov87GdviW63eMVUCRFRl2Jue";
+Moralis.start({ serverUrl, appId });
 const ethers = Moralis.web3Library;
-
 
 //=======================================================================================================================================-
 //variables and dummy dataset
 //========================================================================================================================================
-let plotView =["void.snows.lobbingsight","faulting.akin.launchers","bumpkins.meeting.slalom","void.snows.lobbing","dilating.reciprocal.suitably"]
-let hashStore=[]    // an array that would store the hashed string of the  concatenated words for each tile with dots included
-let HashedArrAsString;   /// a string that represents all the hashes form every single tile,concatenated
-let plotID;               // will hold the master hash as a value;
-let incrementer =0;
-let nftObject;            //the metadata object
+let plotView = [
+  "void.snows.lobbingsight",
+  "faulting.akin.launchers",
+  "bumpkins.meeting.slalom",
+  "void.snows.lobbing",
+  "dilating.reciprocal.suitably",
+];
+let hashStore = []; // an array that would store the hashed string of the  concatenated words for each tile with dots included
+let HashedArrAsString; /// a string that represents all the hashes form every single tile,concatenated
+let plotID; // will hold the master hash as a value;
+let incrementer = 0;
+let nftObject; //the metadata object
 let cIdOfUploadeedPhoto; // variable that stores the cid of the uploaded image by the user
-
 
 //=======================================================================================================================================
 //HTML Selectors
 //=======================================================================================================================================-
-let $render=document.getElementById("render");   // not improtant 
-let $plotID=document.getElementById("plotID");   // not important
-let $ipfs=document.getElementById("ipfs");   // not important
-let $uploadImageToIPFS=document.getElementById('uploadImageToIPFS'); //not important
-let $uploadValue=document.getElementById('upload'); //not important
-let $plotSize=document.getElementById('plotSize'); //not important
-let $userAddress=document.getElementById('userAddress'); //not important
-
-
-
-
-
- 
-//UI Functions
-
-function setPlotData() {
-    console.log(plotView);                      // displaying the initial words array
-    for (let i=0; i<plotView.length; i++){      //loop that invokes a keccak hash on every element in the tiles' words array
-      let hash = ethers.utils.id((plotView[i]));
-      hashStore.push(hash);                     // push the resulting hash into the hashstore array
-    }
-
-    HashedArrAsString=hashStore.join("");                  // i convert the entira hasstore array to a single string
-     plotID = ethers.utils.id(HashedArrAsString);          // i pass this string to the hashing function again
-    console.log(plotID);
-    nftObject = Object.assign({},hashStore);             //initialising an object that would contain the hashes of all claimed tiles , as well as their masterhash
-    nftObject.masterHash=plotID;                          //add the masterhash to the metadata 
-    console.log(nftObject);
-    $plotID.value=plotID;   
-    $plotSize.innerHTML+=`<span>Your plot consists of <b>${plotView.length}</b> tiles:</span>`;
-   
-
-    /// code below not important 
-   plotView.map(tileWords=>$render.innerHTML+=`<span> Tile ${incrementer++} coordinates<input disabled="true" id=${incrementer} type="text" class="form-control" value=${tileWords}>`);
-
-}
+let $render = document.getElementById("render"); // not improtant
+let $plotID = document.getElementById("plotID"); // not important
+let $ipfs = document.getElementById("ipfs"); // not important
+let $uploadImageToIPFS = document.getElementById("uploadImageToIPFS"); //not important
+let $uploadValue = document.getElementById("upload"); //not important
+let $plotSize = document.getElementById("plotSize"); //not important
+let $userAddress = document.getElementById("userAddress"); //not important
+let $swap = document.getElementById("swap"); //not important
+let $amount = document.getElementById("amount"); //not important
 
 //========================================================================================================================================
-//IPFS functionality
-//========================================================================================================================================
-
-//1 Uploading the image to IPFS
-async function upload () {
-const data = $uploadValue.files[0];
-const file = new Moralis.File(data.name, data);
-await file.saveIPFS();
- cIdOfUploadeedPhoto = file.ipfs();                     // the URI of the image
- nftObject.imageURI=cIdOfUploadeedPhoto;                //i append the generated imageURI to the metadata object
- $ipfs.removeAttribute('disabled');                     // not important
-console.log("Image saved to IPFS at: " + cIdOfUploadeedPhoto);
-}
-
-$uploadImageToIPFS.addEventListener('click',upload);
-
-
-//2 Upload the Image and the other metadata to IPFS
-
-async function uploadToIpfs () {
-    const metadata = new Moralis.File("metadata.json", {
-        base64: btoa(JSON.stringify(nftObject)),
-      });
-      await metadata.saveIPFS();
-      console.log(metadata.hash());
-      console.log(`Link to the file on IPFS:   ${metadata.ipfs()}`);                     //check the console for the ipfs link
-}
-
-$ipfs.addEventListener('click',uploadToIpfs);
-
-
-//========================================================================================================================================
-//related to communication with the 1inch API
+//Displaying the current wallet address
 //========================================================================================================================================
 async function displayUser() {
-let wallet = await Moralis.User.currentAsync();
-let user = await wallet.get ('ethAddress');
-$userAddress.innerHTML=user;
-console.log(user)
+  let wallet = await Moralis.User.currentAsync();
+  let user = await wallet.get("ethAddress");
+  $userAddress.innerHTML = user;
+  console.log(user);
 }
-
-
-
-
-
-
-
-
-
-
 
 //========================================================================================================================================
 //web3 Functions
-async function login(){
-    Moralis.Web3.authenticate().then(async function (){
-        const chainIdHex = await Moralis.switchNetwork("0x13881");
-    });
+//========================================================================================================================================
+async function login() {
+  Moralis.Web3.authenticate().then(async function () {
+    const chainIdHex = await Moralis.switchNetwork("0x5");
+  });
 }
 
-/* *async function assignPlot() {
-    const plotID = document.getElementById("plotID").value;
-    const assigned = await isPlotAssigned(plotID);
-    if (!assigned) {
-        const metadata = {
-            "PlotID":plotID,
-            "PlotX":document.getElementById("plotX").value,
-            "PlotY":document.getElementById("plotY").value,
-            "LocationX":document.getElementById("locationX").value,
-            "LocationY":document.getElementById("locationX").value,
-            "image":"https://moralis.io/wp-content/uploads/2021/06/Moralis-Glass-Favicon.svg",
-        }
-        const metadataFile = new Moralis.File("metadata.json", {base64 : btoa(JSON.stringify(metadata))});
-        await metadataFile.saveIPFS();
-        const metadataURI = metadataFile.ipfs();
-        await mint(metadataURI);
-    }
-    else{
-        displayMessage("01","Plot is already assigned");
-    }
+async function Swapp() {
+  const ABI = [
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "owner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "spender",
+          type: "address",
+        },
+        {
+          indexed: false,
+          internalType: "uint256",
+          name: "value",
+          type: "uint256",
+        },
+      ],
+      name: "Approval",
+      type: "event",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "from",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "uint256",
+          name: "amount",
+          type: "uint256",
+        },
+      ],
+      name: "depositDone",
+      type: "event",
+    },
+    { stateMutability: "payable", type: "fallback" },
+    {
+      inputs: [{ internalType: "address", name: "", type: "address" }],
+      name: "_ethbalances",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [{ internalType: "uint256", name: "amountIn", type: "uint256" }],
+      name: "swap",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    { stateMutability: "payable", type: "receive" },
+  ];
+  const swapp = {
+    contractAddress: "0xad1a76ffbf12d45c23fd9d1f1e073d05ce9bde39",
+    functionName: "swap",
+    abi: ABI,
+    params: {
+      amountIn: amount.value,
+    },
+  };
+  try {
+    await Moralis.executeFunction(swapp);
+    console.log("Starting mint process");
+  } catch (error) {
+    console.log(error);
+  }
 }
 
+document.getElementById("swap").onclick = Swapp;
 
-async function mint(_tokenURI) {
-    const contractOptions = {
-        contractAddress: contractAddress,
-        abi: contractABI,
-        functionName: "assign",
-        params: {
-            tokenURI:_tokenURI,
-            bytesId:document.getElementById("plotID").value
-        }
-    }
-    try{
-        const transaction = await Moralis.executeFunction(contractOptions);
-        await transaction.wait();
-        displayMessage("00","Transaction confirmed with hash "+transaction.hash);
-    }
-    catch(error){
-        displayMessage("01","Transaction reverted see console for details");
-        console.log(error)
-    }
-}
-
-
-async function isPlotAssigned(plotID) {
-    const contractOptions = {
-        contractAddress: contractAddress,
-        abi: contractABI,
-        functionName: "exist",
-        params: {
-            bytesId:plotID
-        }
-    }
-    return await Moralis.executeFunction(contractOptions);
-}
-
-*/
 //========================================================================================================================================
 //functions to be executed upon load
 //========================================================================================================================================
-login(); 
-setPlotData();
+login();
 displayUser();
-//drawCanvas();
-//window.addEventListener('keydown' , (e) => {
- //   move(e.key)
-//});

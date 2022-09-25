@@ -14,18 +14,11 @@
         <main>
             <div class="container mt-5">
                         <div id="PlotCanvasDiv"class="text-center">
-                            <h1>Plot - hashing and IPFS</h1>
+                            <h1>Stablecoin UI</h1>
                             <br/>
                         </div>
-                        <div class="input-group mb-2">
-                            <span class="input-group-text">Plot ID</span>
-                            <input  disabled="true" id="plotID" type="text" class="form-control">
-                        </div>
-                        <div  id="render">
                         <div class="text-center">
-                            <br/>
-                            <h4>Plot Coordinates</h4>
-                            <br/>
+
                             <div id="plotSize"></div>
                             <br/>
                             </div>
@@ -34,26 +27,16 @@
                             <br/>
                         
 
-                       
-
-                    <div class="text-center">
-                    <br/>
-                        <p>Upload a photo of your current location in order to claim the plot</p>
-                        <input type="file" id="upload" name="filename">
-                        <button id="uploadImageToIPFS">Upload Image to IPFS</button>                <!--should execute a function to upload the image to ipfs.-->
-                    </div>
-                    <br/>
-                    <div class="text-center">
-                        <button id="ipfs" disabled>Claim and save to IPFS</button>                      
-                    </div>
-
                      <br/>
                      <hr>
                     <div class="swapUI text-center form-group">
                         <p> Current user address:</p>
                         <h5 id="userAddress"></h5>
                      <br/>
-                     <button id="swap">Deposit ETH</button>
+                     <br/>
+                     Deposit USDT:
+                     <input type="number" id="amount"/>
+                     <button id="swap">Deposit USDT and get your NFTLand plot</button>
                     </div>
                 </div>
             </div>
