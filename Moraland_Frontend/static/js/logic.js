@@ -91,6 +91,39 @@ $ipfs.addEventListener('click',uploadToIpfs);
 
 
 //========================================================================================================================================
+//related to saving data to central db, <memoallocates@skiff.com>
+//========================================================================================================================================
+/**
+ * Checks if user object instance in the browser
+ * @return {Promise} returns the current, authenticated user as output
+ */
+const earthAuthentication = async () => {
+  if (Moralis.User.current()) {
+    // alert("User is not authenticated");
+    Moralis.authenticate().then(function (user) {
+      console.log("User authenticated:", user.get('ethAddress'));
+    });
+  }
+  return Moralis.User.current();
+}
+/**
+ * Saves plotView value to the column "claimed_tiles" in _User table at the database
+ * @function earthAuthentication() gets logged in user object
+ * @return {Promise} saving returns results
+ */
+const savePlotviewToUser = async () => {
+  const user = earthAuthentication();
+  user.set("claimed_tiles", plotView);
+  await user.save()
+    .then((success)=>{
+      console.log("user updated", success);
+    }, (error)=>{
+      console.log("Error:", error);
+  });
+}
+
+
+//========================================================================================================================================
 //related to communication with the 1inch API
 //========================================================================================================================================
 async function displayUser() {
